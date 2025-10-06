@@ -48,8 +48,8 @@ public class UserService {
 		 Optional<UserInformation> info=userRepository.findById(id);
 		 if(info.isPresent()) {
 			 UserInformation userInformation=info.get();
-//			 userInformation.setPassword(bCryptPasswordEncoder.encode(dto.getCurrent_Password()));
-			 userInformation.setPassword(dto.getNew_Password());
+			 userInformation.setPassword(bCryptPasswordEncoder.encode(dto.getNew_Password()));
+//			 userInformation.setPassword(dto.getNew_Password());
 			 userRepository.save(userInformation);
 			 return "password chand sucessfully.."+userInformation.getUsername();
 		 }else {
