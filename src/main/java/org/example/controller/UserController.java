@@ -72,7 +72,7 @@ public class UserController {
 		org.springframework.http.HttpHeaders responseHeaders=new org.springframework.http.HttpHeaders();
 		responseHeaders.add("Authorization",token);
 		
-		return new ResponseEntity<String>("Welcome to home"+dto.getEmailId(),responseHeaders,HttpStatusCode.valueOf( 200));
+		return new ResponseEntity<String>("Welcome to home : "+dto.getEmailId(),responseHeaders,HttpStatusCode.valueOf( 200));
 	}
 	
 	@PostMapping("/user/change/password/{emailId}")
