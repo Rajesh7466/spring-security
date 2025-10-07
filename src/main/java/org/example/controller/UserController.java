@@ -1,7 +1,9 @@
 package org.example.controller;
 
 import java.util.Map;
+import java.util.jar.Attributes.Name;
 
+import org.example.dto.AdressDto;
 import org.example.dto.ChangePasword_Dto;
 import org.example.dto.User_Info_dto;
 import org.example.dto.User_Login_Info;
@@ -81,21 +83,11 @@ public class UserController {
 		return userService.changePassword(dto,emailId);
 	}
 	
- @PostMapping("/public/log")
- public ResponseEntity<String> userLogins(@RequestBody User_Login_Info dto){
-	 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-	 	=new UsernamePasswordAuthenticationToken(dto.getEmailId(),dto.getPassword());
-	 try {
-		 authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-	} catch ( BadCredentialsException e) {
-		System.out.println("Bad Creadtionals :m "+e.getMessage());
- 	}
-//	 todo :get user Details 
-	 String token=this.jwtUtill.createToken( dto.getEmailId());
-	 HttpHeaders headers=new HttpHeaders();
-	 headers.add("Authorization", token);
-	return  new ResponseEntity<String>("Welcome to home "+dto.getEmailId(),headers,HttpStatus.OK); 
+ @PostMapping("/adress/{emailId}")
+ public String  addAdress(@RequestBody AdressDto dto, @PathVariable ("emailId") String emailId){
+	 System.out.println("Adress data is recived : "+ dto.getCity());
+	return  userService.addAdress(dto,emailId);
+	  
  }
-
  
 } 

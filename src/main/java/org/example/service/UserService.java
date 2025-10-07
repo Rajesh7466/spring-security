@@ -6,10 +6,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
+import org.example.dto.AdressDto;
 import org.example.dto.ChangePasword_Dto;
 import org.example.dto.User_Info_dto;
 import org.example.dto.User_Login_Info;
+import org.example.entity.UserAdress;
 import org.example.entity.UserInformation;
+import org.example.repository.AdressRepository;
 import org.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +24,9 @@ public class UserService {
 	
 	@Autowired
 	BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	@Autowired
+	AdressRepository addressRepository;
 	
 	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 //	this is for signin logic 
@@ -56,6 +62,28 @@ public class UserService {
 			 logger.warn("this is invaild your userid...");
 			return "the id is incorrect.. please provide the valid emailId...";
 		} 
+	}
+ public  String addAdress(AdressDto dto, String emailId) {
+		 UserInformation user=userRepository.findByEmailId(emailId).orElseThrow(()->new RuntimeException("Email id is not found"));
+		 
+		 if(user!=null) {
+			 UserAdress adress=new UserAdress();
+			 adress.setHouseNo(dto.getHouseNo());
+			 adress.setStreet(dto.getStreet());
+			 adress.setCity(dto.getCity());
+			 adress.setPostalCode(dto.getPostalCode());
+			 adress.setCountry(dto.getCountry());
+			 adress.setState(dto.getState());
+			 
+			 
+			 adress.setUser(user);
+			  addressRepository.save(adress);
+			  return "User adress added sucessfull.. with your user id "+user.getEmailId();
+		 }
+		 else {
+			 return "User id is not found ";
+		 }
+		
 	}
 
 }

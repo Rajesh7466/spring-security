@@ -49,17 +49,17 @@ public class AppSecurityConfig {
 		return  httpSecurity.build();
 	}
 	
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-	    return new WebMvcConfigurer() {
-	        @Override
-	        public void addCorsMappings(CorsRegistry registry) {
-	            registry.addMapping("/**")
-	                .allowedOrigins("*") // or specify your frontend URL
-	                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-	                .allowedHeaders("*")
-	                .exposedHeaders("Authorization"); // <-- This exposes the header!
-	        }
-	    };
-	}
+//	@Bean
+//	public WebMvcConfigurer corsConfigurer() {
+//	    return new WebMvcConfigurer() {
+//	        @Override
+//	        public void addCorsMappings(CorsRegistry registry) {
+//	            registry.addMapping("/**")
+//	                .allowedOrigins("*") // or specify your frontend URL
+//	                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//	                .allowedHeaders("*")
+//	                .exposedHeaders("Authorization"); // <-- This exposes the header!
+//	        }
+//	    };
+//	}
 }

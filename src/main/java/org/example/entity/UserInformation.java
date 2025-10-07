@@ -1,12 +1,15 @@
 package org.example.entity;
 
+import java.awt.List;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.Getter;
@@ -22,6 +25,9 @@ public class UserInformation implements UserDetails {
 	private String password;
 	private String mobile;
 	private String   fullName;
+	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private java.util.List<UserAdress> adresses;
 	
 	public UserInformation() {
 		
