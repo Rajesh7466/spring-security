@@ -1,10 +1,11 @@
 package org.example.entity;
 
-import java.awt.List;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -27,6 +28,7 @@ public class UserInformation implements UserDetails {
 	private String   fullName;
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	 @JsonManagedReference // <--- CORRECT: This tells Jackson to include 'adresses' when UserInformation is serialized.
 	private java.util.List<UserAdress> adresses;
 	
 	public UserInformation() {

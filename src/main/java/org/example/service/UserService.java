@@ -15,6 +15,7 @@ import org.example.entity.UserInformation;
 import org.example.repository.AdressRepository;
 import org.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 @Service
@@ -41,12 +42,13 @@ public class UserService {
 		}
 	}
 //	this is for login logic
-	public  String  userLogin(User_Login_Info dto) {
+	public    String  userLogin(User_Login_Info dto) {
 		UserInformation information= userRepository.findByEmailIdAndPassword(dto.getEmailId(), dto.getPassword());
 		if(information!=null) {
 			return "Login Sucesfulll.........."+information.getUsername();
+			 
 		}else {
-			return "Email Id or password is incorrect...";
+			 return "user id is invalid ";
 		}
  	}
 //	this is for change password
@@ -85,5 +87,17 @@ public class UserService {
 		 }
 		
 	}
+  
+//   delete the user from data base
+ public String deleteById(String emailId) {
+	 UserInformation user=userRepository.findById(emailId).orElseThrow(()-> new UsernameNotFoundException("User is not found "));
+	 	if(user==null) {
+	 		return "emailid is wrong please provide the valid emailid";
+	 	}else {
+ 		 userRepository.deleteById(emailId);
+ 		 return "User Deleted sucessfully....";
+ 		}
+	 }
+	 
 
 }

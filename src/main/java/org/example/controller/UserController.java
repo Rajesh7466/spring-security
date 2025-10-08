@@ -23,6 +23,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,7 +75,7 @@ public class UserController {
 		org.springframework.http.HttpHeaders responseHeaders=new org.springframework.http.HttpHeaders();
 		responseHeaders.add("Authorization",token);
 		
-		return new ResponseEntity<String>("Welcome to home : "+dto.getEmailId(),responseHeaders,HttpStatusCode.valueOf( 200));
+		return new ResponseEntity<String>("Welcome to home : "+dto.getEmailId(),responseHeaders,HttpStatus.valueOf( 200));
 	}
 	
 	@PostMapping("/user/change/password/{emailId}")
@@ -88,6 +89,18 @@ public class UserController {
 	 System.out.println("Adress data is recived : "+ dto.getCity());
 	return  userService.addAdress(dto,emailId);
 	  
+ }
+ 
+ 
+// 	delete user by id 
+ @DeleteMapping("/delete/user/{emailId}")
+ public ResponseEntity<String> deleteByUser(@PathVariable String emailId){
+	 String response=userService.deleteById(emailId);
+	 if(response.startsWith("User Deleted ")) {
+		 return ResponseEntity.ok(response);
+	 }else {
+		 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+	 }
  }
  
 } 
