@@ -5,6 +5,7 @@ import java.util.jar.Attributes.Name;
 
 import org.example.dto.AdressDto;
 import org.example.dto.ChangePasword_Dto;
+import org.example.dto.UserLogin_Response;
 import org.example.dto.User_Info_dto;
 import org.example.dto.User_Login_Info;
 import org.example.entity.UserInformation;
@@ -56,7 +57,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/public/login")
-	public  ResponseEntity<String> userLogin(@RequestBody User_Login_Info dto) {
+	public  ResponseEntity<UserLogin_Response> userLogin(@RequestBody User_Login_Info dto) {
 		System.out.println("email id is "+dto.getEmailId());
 //		validation of creadtionals:user and password combination
 	//	String responseString=null;
@@ -68,16 +69,19 @@ public class UserController {
 		}catch ( BadCredentialsException e) {
 			System.err.println("UserController : Bad CredentialsEcception");
 			 String response="'invalid Creadtionals";
-			 return new ResponseEntity<String>(response,HttpStatusCode.valueOf(401));
+//			 return new ResponseEntity<String>(response,HttpStatusCode.valueOf(401));
+			 return new ResponseEntity<>(null,HttpStatus.UNAUTHORIZED);
 			  
 		}
 		
 		String token=jwtUtill.createToken(dto.getEmailId());
 		org.springframework.http.HttpHeaders responseHeaders=new org.springframework.http.HttpHeaders();
 		responseHeaders.add("Authorization",token);
-//		 
-		return new ResponseEntity<String>("Welcome to home : "+dto.getEmailId(),responseHeaders,HttpStatus.valueOf( 200));
-	 
+		
+		
+		UserLogin_Response response=userService.userLogin(dto);
+	//	return new ResponseEntity<String>("Welcome to home : "+dto.getEmailId(),responseHeaders,HttpStatus.valueOf( 200));
+	 return new ResponseEntity<>(response,responseHeaders,HttpStatus.OK);
 	}
 	
 	@PostMapping("/user/change/password/{emailId}")
@@ -85,6 +89,8 @@ public class UserController {
 		System.out.println("new password is :"+dto.getNew_Password());
 		return userService.changePassword(dto,emailId);
 	}
+	
+	
 	
  @PostMapping("/adress/{emailId}")
  public String  addAdress(@RequestBody AdressDto dto, @PathVariable ("emailId") String emailId){

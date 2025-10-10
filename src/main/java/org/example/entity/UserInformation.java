@@ -1,6 +1,7 @@
 package org.example.entity;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +30,7 @@ public class UserInformation implements UserDetails {
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	 @JsonManagedReference // <--- CORRECT: This tells Jackson to include 'adresses' when UserInformation is serialized.
-	private java.util.List<UserAdress> adresses;
+	 private List<UserAdress> adress;
 	
 	public UserInformation() {
 		

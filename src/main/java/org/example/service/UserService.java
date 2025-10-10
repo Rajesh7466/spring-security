@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.example.dto.AdressDto;
 import org.example.dto.ChangePasword_Dto;
+import org.example.dto.UserLogin_Response;
 import org.example.dto.User_Info_dto;
 import org.example.dto.User_Login_Info;
 import org.example.entity.UserAdress;
@@ -42,15 +43,21 @@ public class UserService {
 		}
 	}
 //	this is for login logic
-	public     UserInformation  userLogin(User_Login_Info dto) {
-		UserInformation information= userRepository.findByEmailIdAndPassword(dto.getEmailId(), dto.getPassword());
-		if(information!=null) {
-			return information;
-			 
-		}else {
-			 return null;
-		}
+	public      UserLogin_Response  userLogin(User_Login_Info dto) {
+		//UserInformation information= userRepository.findByEmailIdAndPassword(dto.getEmailId(), dto.getPassword());
+		UserInformation  user=userRepository.findById(dto.getEmailId()).orElseThrow(()-> new UsernameNotFoundException("User is not found"));
+			if(user!=null) {
+				UserLogin_Response response=new UserLogin_Response();
+				response.setEmailId(user.getEmailId());
+				response.setUsername(user.getFullName());
+				response.setMobile(user.getMobile());
+				response.setAdresses(user.getAdress());
+				return response;
+			}
+		 return null;
  	}
+	
+	 
 //	this is for change password
 	public String changePassword(ChangePasword_Dto dto, String id) {
 		 Optional<UserInformation> info=userRepository.findById(id);
