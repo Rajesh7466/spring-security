@@ -3,6 +3,4 @@
 
 # flow of  ecommerce
 
-User Browse Products → Add to Cart → Review Cart → Checkout → Payment → Order Confirmation
-         ↓                 ↓            ↓            ↓          ↓            ↓
-    [Get Products]    [Cart API]   [Cart Items]  [Order API] [Payment]  [Email/SMS]
+<pre> ```mermaid flowchart TD A[User] --> B[Login Form] B --> C{Spring Security} C -->|Valid Credentials| D[Generate JWT Token] C -->|Invalid Credentials| E[Access Denied] D --> F[Access Protected API] F --> G[Authorization Check] G -->|Role = Admin| H[Admin Access Granted] G -->|Role = User| I[User Access Granted] G -->|Unauthorized| E[Access Denied] ``` </pre>
