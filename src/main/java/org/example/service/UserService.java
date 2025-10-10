@@ -42,13 +42,13 @@ public class UserService {
 		}
 	}
 //	this is for login logic
-	public    String  userLogin(User_Login_Info dto) {
+	public     UserInformation  userLogin(User_Login_Info dto) {
 		UserInformation information= userRepository.findByEmailIdAndPassword(dto.getEmailId(), dto.getPassword());
 		if(information!=null) {
-			return "Login Sucesfulll.........."+information.getUsername();
+			return information;
 			 
 		}else {
-			 return "user id is invalid ";
+			 return null;
 		}
  	}
 //	this is for change password

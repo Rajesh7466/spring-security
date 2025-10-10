@@ -69,13 +69,15 @@ public class UserController {
 			System.err.println("UserController : Bad CredentialsEcception");
 			 String response="'invalid Creadtionals";
 			 return new ResponseEntity<String>(response,HttpStatusCode.valueOf(401));
+			  
 		}
 		
 		String token=jwtUtill.createToken(dto.getEmailId());
 		org.springframework.http.HttpHeaders responseHeaders=new org.springframework.http.HttpHeaders();
 		responseHeaders.add("Authorization",token);
-		
+//		 
 		return new ResponseEntity<String>("Welcome to home : "+dto.getEmailId(),responseHeaders,HttpStatus.valueOf( 200));
+	 
 	}
 	
 	@PostMapping("/user/change/password/{emailId}")
