@@ -72,7 +72,7 @@ public class UserService {
 			return "the id is incorrect.. please provide the valid emailId...";
 		} 
 	}
- public  String addAdress(AdressDto dto, String emailId) {
+ public AdressDto  addAdress(AdressDto dto, String emailId) {
 		 UserInformation user=userRepository.findByEmailId(emailId).orElseThrow(()->new RuntimeException("Email id is not found"));
 		 
 		 if(user!=null) {
@@ -86,11 +86,19 @@ public class UserService {
 			 
 			 
 			 adress.setUser(user);
-			  addressRepository.save(adress);
-			  return "User adress added sucessfull.. with your user id "+user.getEmailId();
+			 adress= addressRepository.save(adress);
+			 
+			  AdressDto response=new AdressDto();
+			  response.setHouseNo(adress.getHouseNo());
+			  response.setStreet(adress.getStreet());
+			  response.setCity(adress.getCity());
+			  response.setPostalCode(adress.getPostalCode());
+			  response.setCountry(adress.getCountry());
+			  response.setState(adress.getState());
+			  return response;
 		 }
 		 else {
-			 return "User id is not found ";
+			 return null;
 		 }
 		
 	}

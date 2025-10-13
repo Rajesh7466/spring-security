@@ -1,27 +1,23 @@
 package org.example.controller;
 
-import java.util.Map;
-import java.util.jar.Attributes.Name;
 
 import org.example.dto.AdressDto;
 import org.example.dto.ChangePasword_Dto;
 import org.example.dto.UserLogin_Response;
 import org.example.dto.User_Info_dto;
 import org.example.dto.User_Login_Info;
-import org.example.entity.UserInformation;
 import org.example.repository.UserRepository;
 import org.example.security.JwtUtill;
 import org.example.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.convert.DtoInstantiatingConverter;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,10 +25,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 @RestController
-@CrossOrigin("*")
+//@CrossOrigin("*")
+@CrossOrigin(origins = "*", 
+allowedHeaders = {"Content-Type", "Authorization", "Accept", "Origin"},
+exposedHeaders = {"Authorization"},
+methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class UserController {
+	
+	private static final Logger logger=LoggerFactory.getLogger("UserController.class");
 	@Autowired
 	UserRepository repository;
 	@Autowired
@@ -45,12 +48,16 @@ public class UserController {
 	BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+	
 	@GetMapping("/public/hello")
 	public String hello() {
 		return "hello";
 	}
+	
+	
 	@PostMapping("/public/user/register")
 	public String userSignUp(@RequestBody User_Info_dto dto) {
+		logger.info("User data is recived ... for registration "+ dto.getEmailId());
 		System.out.println("data is recived : "+dto.getEmailId());
 		
 		return userService.userSignUp(dto);
@@ -93,10 +100,20 @@ public class UserController {
 	
 	
  @PostMapping("/adress/{emailId}")
- public String  addAdress(@RequestBody AdressDto dto, @PathVariable ("emailId") String emailId){
+ @CrossOrigin(origins = "http://127.0.0.1:5501", // Be specific for production
+ allowedHeaders = {"Content-Type", "Authorization", "Accept", "Origin"},
+ exposedHeaders = {"Authorization"}, // Only if you are reading Authorization from this specific response
+ methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
+ public   ResponseEntity<AdressDto>  addAdress(@RequestBody AdressDto dto, @PathVariable ("emailId") String emailId){
+	 logger.info("user Aress data is reicved ..."+ emailId);
 	 System.out.println("Adress data is recived : "+ dto.getCity());
-	return  userService.addAdress(dto,emailId);
-	  
+	AdressDto responseAdressDto= userService.addAdress(dto, emailId);
+	if(responseAdressDto!=null) {
+		return new ResponseEntity<>(responseAdressDto, HttpStatus.OK);
+	}else {
+		return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+	}
+	   
  }
  
  

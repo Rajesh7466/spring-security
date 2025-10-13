@@ -39,6 +39,7 @@ public class AppSecurityConfig {
 	public SecurityFilterChain securityConfig(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf(csrf->csrf.disable())
 		//.cors(csrf->csrf.disable())
+		.cors(cors -> {})
 		.authorizeHttpRequests(
 				reqs->reqs.requestMatchers("/public/**")
 				.permitAll()
