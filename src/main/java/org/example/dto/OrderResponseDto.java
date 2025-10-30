@@ -1,5 +1,8 @@
 package org.example.dto;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,11 +11,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrderResponseDto {
-	 private long orderItemId;
-	    private long productId;
-	    private String productName;
-	    private String productImage;
-	    private int quantity;
-	    private double price;
-	    private double subtotal;
+	  private long orderId;
+	    private String userEmail;
+	    private String userName;
+	    private LocalDateTime orderDate;
+	    private double totalAmount;
+	    private String status;
+	    private String deliveryAddress;
+	    private String paymentType;
+	    private String specialInstructions;
+	    private List<OrderItemResponseDto> items;
 }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.example.dto.OrderItemResponseDto;
 import org.example.dto.OrderRequestDto;
 import org.example.dto.OrderResponseDto;
 import org.example.entity.CartEntity;
@@ -122,4 +123,34 @@ public class OrderService {
 		return  responseDtos;
 	}
 
+	
+	// Helper method to map Order Entity to Response DTO
+	private OrderResponseDto mapOrderToResponseDto(OrderEntity order) {
+		OrderResponseDto response=new OrderResponseDto();
+		response.setOrderId(order.getId());
+		response.setUserEmail(order.getUser().getEmailId());
+		response.setUserName(order.getUser().getUsername());
+		response.setOrderDate(order.getOrderDate());
+		response.setTotalAmount(order.getTotalAmount());
+		response.setStatus(order.getStatus());
+		response.setDeliveryAddress(order.getDeliveryAdress());
+		response.setPaymentType(order.getPaymentType());
+		
+		List<OrderItemResponseDto> itemDtos=new ArrayList<>();
+		for(OrderItems orderItems : order.getOrderItems()) {
+			OrderItemResponseDto itemDto=new OrderItemResponseDto();
+			itemDto.setOrderItemId(orderItems.getId());
+			itemDto.setProductId(orderItems.getProduct().getId());
+			itemDto.setProductName(orderItems.getProduct().getName());
+			itemDto.setProductImage(orderItems.getProduct().getImageUrl());
+			itemDto.setQuantity(orderItems.getQuantity());
+			itemDto.setPrice(orderItems.getPrice());
+			itemDto.setSubtotal(orderItems.getPrice() * orderItems.getQuantity());
+			
+			itemDtos.add(itemDto);
+		}
+		response.setItems(itemDtos);
+		return response;
+	}
+	
 }
