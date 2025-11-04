@@ -1,5 +1,16 @@
 package org.example.dto;
 
-public class ProductDto {
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
+@Data
+@Getter
+@Setter
+public class ProductDto {
+	private String name;
+    private String description;
+    private double price;
+    private int stockQuantity;
+    private String imageUrl;
 }
