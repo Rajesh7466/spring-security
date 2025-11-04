@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
@@ -42,9 +43,9 @@ public class OrderService {
 	@Autowired
 	OrderItemsRepository orderItemsRepository;
 	private static final Logger logger=LoggerFactory.getLogger(OrderService.class);
-	
+	@Transactional
 	public OrderResponseDto placeOrder(String emailId, OrderRequestDto requestDto) {
-		 logger.info("Placing order for user : ",emailId);
+		 logger.info("Placing order for user : {}",emailId);
 //	1.	 find User
 		 UserInformation user=userRepository.findById(emailId).orElseThrow(()-> new UsernameNotFoundException("User is not found"));
 		 

@@ -42,7 +42,8 @@ public class OrderController {
 	  
 	@PostMapping("/place/{emailId}")
 	public ResponseEntity<OrderResponseDto> placeOrder(@PathVariable String emailId, @RequestBody OrderRequestDto requestDto){
-		 logger.info("Request is recived to place the order to user {} ",emailId);
+		System.out.println("placing in order for this email :"+emailId); 
+		logger.info("Request is recived to place the order to user {} ",emailId);
 		 try {
 			OrderResponseDto response=orderService.placeOrder(emailId,requestDto);
 			return new ResponseEntity<>(response, HttpStatus.CREATED);

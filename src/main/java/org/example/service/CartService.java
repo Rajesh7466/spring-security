@@ -1,8 +1,12 @@
 package org.example.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import org.example.dto.CartItemResponseDto;
 import org.example.dto.CartRequestDto;
+import org.example.dto.CartResponseDto;
 import org.example.entity.CartEntity;
 import org.example.entity.CartItem;
 import org.example.entity.ProductEntity;
@@ -86,6 +90,49 @@ public class CartService {
 		   }
 		
 	}
+
+	public CartResponseDto getCartItems(String emailId) {
+		logger.info("Fetching cart items for user: {}", emailId);
+		UserInformation user=userRepository.findById(emailId).orElseThrow(()-> new UsernameNotFoundException("User is not fond"));
+		Optional<CartEntity> cartOpt=cartRepository.findByUser(user);
+		if(cartOpt.isEmpty()) {
+			CartResponseDto response=new CartResponseDto();
+			response.setUserEmail(emailId);
+			response.setItems(new ArrayList<>());
+			response.setTotalAmount(0.0);
+			response.setTotalItems(0);
+			return response;
+		}
+		CartEntity cart=cartOpt.get();
+		List<CartItem> cartItems=cartItemRepository.findByCart(cart);
+		CartResponseDto response=new CartResponseDto();
+		response.setCartId(cart.getId());
+		response.setUserEmail(emailId);
+		
+		List<CartItemResponseDto> itemsDtos=new ArrayList<>();
+		double totalAmount=0.0;
+		int totalItems=0;
+		
+		for(CartItem item :cartItems) {
+			CartItemResponseDto itemDto=new CartItemResponseDto();
+			itemDto.setCartItemId(item.getId());
+			itemDto.setProductId(item.getProduct().getId());
+			itemDto.setProductName(item.getProduct().getName());
+			itemDto.setProductImage(item.getProduct().getImageUrl());
+			itemDto.setProductPrice(item.getProduct().getPrice());
+			itemDto.setQuantity(item.getQuantity());
+			itemDto.setSubtotal(item.getProduct().getPrice() * item.getQuantity());
+			
+			itemsDtos.add(itemDto);
+			totalAmount+=itemDto.getSubtotal();
+			totalItems+=item.getQuantity();
+		}
+		response.setItems(itemsDtos);
+		response.setTotalAmount(totalAmount);
+		response.setTotalItems(totalItems);
+		return response;
+	}
 	
+	 
 	
 }
