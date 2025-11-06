@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CartService {
@@ -131,6 +132,52 @@ public class CartService {
 		response.setTotalAmount(totalAmount);
 		response.setTotalItems(totalItems);
 		return response;
+	}
+
+	@Transactional
+	public String removeFromCart(long cartItemId, String emailId) {
+		 logger.info("Removing cart item: {} for user: {}", cartItemId, emailId);
+		 UserInformation user=userRepository.findById(emailId)
+				 .orElseThrow(()->new UsernameNotFoundException("User is not found"));
+		 CartItem cartItem=cartItemRepository.findById(cartItemId)
+				 .orElseThrow(()->new RuntimeException("cart is not found "));
+				 
+//				  verify the cart the cart item belong to user or not 
+		 if(!cartItem.getCart().getUser().getEmailId().equals(emailId)){
+			 throw new RuntimeException("Unauthorized access to cart item");
+		 }
+		 cartItemRepository.delete(cartItem);
+		 return "Item removed from cart sucessfully";
+	}
+
+	@Transactional
+	public CartResponseDto updateCartItemQuantity(long cartItemId, int quantity, String emailId) {
+		   logger.info("Updating cart item: {} quantity to: {} for user: {}", cartItemId, quantity, emailId);
+		   UserInformation user = userRepository.findById(emailId)
+	                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+	        CartItem cartItem = cartItemRepository.findById(cartItemId)
+	                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+	        
+	     // Verify the cart item belongs to the user
+	        if(!cartItem.getCart().getUser().getEmailId().equals(emailId)) {
+	        	  throw new RuntimeException("cart item is not found");
+	        }
+//	        check stock availability
+	        if(cartItem.getProduct().getStockQuantity() < quantity) {
+	        	 throw new RuntimeException("Insufficient stock for product: "+ cartItem.getProduct().getName() );
+	        }
+	        if(quantity<=0){
+//	        	  remove item if quantity is 0 or negative 
+	        	cartItemRepository.delete(cartItem);
+	        	 logger.info("Cart item removed due to zero quantity");
+	        }else {
+	        	  cartItem.setQuantity(quantity);
+	        	  cartItemRepository.save(cartItem);
+	        	  logger.info("Cart item quantity updated successfully");
+	        }
+//	        return updated cart
+	        return getCartItems(emailId);
 	}
 	
 	 
