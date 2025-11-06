@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.management.RuntimeErrorException;
+
 import org.example.dto.OrderItemResponseDto;
 import org.example.dto.OrderRequestDto;
 import org.example.dto.OrderResponseDto;
@@ -25,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+ 
 
 @Service
 public class OrderService {
@@ -152,6 +156,48 @@ public class OrderService {
 		}
 		response.setItems(itemDtos);
 		return response;
+	}
+
+	public OrderResponseDto getOrderById(long orderId, String emailId) {
+		  logger.info("Fetching order: {} for user: {}", orderId, emailId);
+		  UserInformation user=userRepository.findById(emailId)
+				  .orElseThrow(()->new UsernameNotFoundException("user is not found"));
+		  OrderEntity entity=orderRepository.findByIdAndUser(orderId, user)
+				  .orElseThrow(()->new RuntimeException("Order is not found "));
+		  
+		return  mapOrderToResponseDto(entity);
+	}
+
+	@Transactional
+	public String cancelOrder(long orderId, String emailId) {
+		 logger.info("Cancelling order: {} for user: {}", orderId, emailId);
+		UserInformation user=userRepository.findById(emailId)
+				.orElseThrow(()->new UsernameNotFoundException("User is Not found"));
+		OrderEntity  order=orderRepository.findByIdAndUser(orderId, user)
+				.orElseThrow(()-> new RuntimeException("order not found or does not belong to user"));
+//		check id oder is canceled
+		if(order.getStatus().equals("SHIPPED")||order.getStatus().equals("DELIVERED")) {
+			throw new RuntimeException("can not can cancl in order : "+order.getStatus()+" state");
+		}
+		if(order.getStatus().equals("CANCELLED")) {
+			throw new RuntimeException("Order is canceled  ");
+		}
+		
+//		update order status 
+		order.setStatus("CANCELED");
+		orderRepository.save(order);
+		
+//		restore store product 
+		List<OrderItems> orderItems=orderItemsRepository.findByOrder(order);
+		for(OrderItems orderItem : orderItems) {
+			ProductEntity product=orderItem.getProduct();
+			product.setStockQuantity(product.getStockQuantity() + orderItem.getQuantity());
+			productRepository.save(product);
+			 logger.info("Restored stock for product: {}. New stock: {}", product.getName(), product.getStockQuantity());
+		}
+		  logger.info("Order cancelled successfully: {}", orderId);
+		  return "Order Canceled sucessfully. order Id: "+orderId;
+		 
 	}
 	
 }

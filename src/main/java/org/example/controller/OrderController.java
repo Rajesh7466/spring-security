@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -76,4 +77,46 @@ public class OrderController {
 	}
 		
 	
+	/**
+     * Get specific order details
+     * Endpoint: GET /order/{orderId}/{emailId}
+     * Secured: Yes (JWT required)
+     */
+	
+	@GetMapping("/{orderId}/{emailId}")
+	public ResponseEntity<OrderResponseDto> getOrderById(@PathVariable long orderId, @PathVariable String emailId){
+		 logger.info("Request received to fetch order: {} for user: {}", orderId, emailId);
+		 try {
+			OrderResponseDto response=orderService.getOrderById(orderId,emailId);
+			return new ResponseEntity<>(response,HttpStatus.OK);
+		}catch ( RuntimeException e) {
+			 logger.error("Error fetching order: {}", e.getMessage());
+			 return new ResponseEntity< >(null,HttpStatus.NOT_FOUND);
+		} 
+		 catch (Exception e) {
+			 logger.error("Unexpected error fetching order: {}", e.getMessage());
+			 return new ResponseEntity< >(null,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+    /**
+     * Cancel an order
+     * Endpoint: PUT /order/cancel/{orderId}/{emailId}
+     * Secured: Yes (JWT required)
+     */
+	@PutMapping("/cancel/{orderId}/{emailId}")
+	public ResponseEntity<String> cancelOrder(@PathVariable long orderId,@PathVariable String emailId){
+		 logger.info("Request received to cancel order: {} for user: {}", orderId, emailId);
+		 try {
+			String response=orderService.cancelOrder(orderId,emailId);
+				new ResponseEntity<>(response,HttpStatus.OK);
+		}catch ( RuntimeException e) {
+			logger.error("Error cancelling order: {}", e.getMessage());
+			return new ResponseEntity<>("Error : "+e.getMessage(),HttpStatus.BAD_REQUEST);
+		}
+		 catch (Exception e) {
+			 logger.error("unexpected error canceling order :{}",e.getMessage());
+			 return new ResponseEntity< >("Error : "+e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}	
 }
