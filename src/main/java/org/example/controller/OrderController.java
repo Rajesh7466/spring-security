@@ -109,7 +109,7 @@ public class OrderController {
 		 logger.info("Request received to cancel order: {} for user: {}", orderId, emailId);
 		 try {
 			String response=orderService.cancelOrder(orderId,emailId);
-				new ResponseEntity<>(response,HttpStatus.OK);
+			return 	new ResponseEntity<>(response,HttpStatus.OK);
 		}catch ( RuntimeException e) {
 			logger.error("Error cancelling order: {}", e.getMessage());
 			return new ResponseEntity<>("Error : "+e.getMessage(),HttpStatus.BAD_REQUEST);

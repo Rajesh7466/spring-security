@@ -41,7 +41,7 @@ public class AppSecurityConfig {
 		//.cors(csrf->csrf.disable())
 		.cors(cors -> {})
 		.authorizeHttpRequests(
-				reqs->reqs.requestMatchers("/public/**")
+				reqs->reqs.requestMatchers("/public/**","/swagger-ui/**","/v3/api-docs/**")
 				.permitAll()
 	            .anyRequest()
 	            .authenticated()

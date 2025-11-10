@@ -13,7 +13,9 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtill {
 	private final String  SECREATE_KEY="3q2+7w==k9f+4W8n5h7mV1sP9y0rK8vQ2tX4uY6zA1bQ8=";
-	private final long TOKEN_EXPIRY_DURATION=10*60000;
+//	private final long TOKEN_EXPIRY_DURATION=10*60000;
+	private final long TOKEN_EXPIRY_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
 	
 	private SecretKey getSecretKeyEntry() {
 		byte[] keyBytes=Decoders.BASE64.decode(SECREATE_KEY);
