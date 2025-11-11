@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.example.dto.AdminOrderDto;
+import org.example.dto.StatusUpdateDto;
 import org.example.entity.OrderEntity;
 import org.example.entity.UserInformation;
 import org.example.repository.OrderRepository;
@@ -19,7 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -92,4 +96,39 @@ private static final Logger logger=LoggerFactory.getLogger(AdminController.class
 		}
 	}
 	
-}
+	/**
+     * Update order status
+     * Endpoint: PUT /admin/orders/{orderId}/status
+     * Body: { "status": "CONFIRMED" }
+     */
+	@PutMapping("/admin/order/{orderId}/status")
+	public ResponseEntity<String> updatOrderStaus(
+			@PathVariable long orderId,
+			@RequestBody StatusUpdateDto statusDto){
+		logger.info("Admin request to update order {} status to {}", orderId, statusDto.getStatus());
+		try {
+			OrderEntity order=orderRepository.findById(orderId)
+					.orElseThrow(()->new RuntimeException("order not found with order ID: "+orderId));
+//			update status
+			order.setStatus(statusDto.getStatus());
+			orderRepository.save(order);
+			logger.info("order status is updated {} ",order,statusDto.getStatus());
+			return new ResponseEntity< >("order status updated sucessfully ",HttpStatus.OK);
+		}catch (RuntimeException e) {
+			 logger.error("Order not found: {}", e.getMessage());
+	            return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);	
+		} 
+		catch (Exception e) {
+			logger.error("Error updating order status: {}", e.getMessage());
+            return new ResponseEntity<>("Error updating status", HttpStatus.INTERNAL_SERVER_ERROR);
+        
+          }
+		}
+	
+	
+	
+	}
+
+	
+	
+
