@@ -82,12 +82,19 @@
     <artifactId>lombok</artifactId>
     <scope>provided</scope>
 </dependency>
+	
+	<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
 
-	 <dependency>
+	
+	 <!--<dependency>
     <groupId>com.oracle.database.jdbc</groupId>
     <artifactId>ojdbc8</artifactId>
     <version>23.4.0.24.05</version>  
-</dependency> 
+</dependency> -->
 	 
 		<!--<dependency>
 			<groupId>com.mysql</groupId>
