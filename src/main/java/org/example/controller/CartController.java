@@ -81,7 +81,7 @@ public class CartController {
 	 * Endpoint: DELETE /cart/item/{cartItemId}/{emailId}
 	 * Secured: Yes (JWT required)
 	 * */
-	@DeleteMapping("/cart/{cartItemId}/{emailId}")
+	@DeleteMapping("/item/{cartItemId}/{emailId}")
 	public ResponseEntity<String>removeFromCart(@PathVariable long cartItemId,@PathVariable String emailId){
 		 logger.info("Request received to remove cart item: {} for user: {}", cartItemId, emailId);
 		 try {
@@ -122,10 +122,11 @@ public class CartController {
      public ResponseEntity<String> clearCart(@PathVariable String emailId){
     	   		logger.info("request recived to clear cart for a user : {}",emailId);
     	   		try {
-					return null;
+    	   			cartService.clearCart(emailId);
+    	   			return new ResponseEntity<>("cart cleared sucessfully",HttpStatus.OK);
 				} catch (Exception e) {
-					// TODO: handle exception
-					return null;                     
+					logger.error("Error clearing cart: {}", e.getMessage());
+					return new ResponseEntity<>("Error : "+e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);                     
 				}
      }
 	
