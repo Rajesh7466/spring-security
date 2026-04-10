@@ -49,10 +49,10 @@ public class UserController {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	
-	@GetMapping("/public/hello")
-	public String hello() {
-		return "hello";
-	}
+	 @GetMapping("/")
+	    public String home() {
+	        return "OK";
+	    }
 	
 	
 	@PostMapping("/public/user/register")

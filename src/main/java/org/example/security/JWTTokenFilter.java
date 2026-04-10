@@ -27,6 +27,14 @@ public class JWTTokenFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
+		
+		  // ✅ ADD THIS AT TOP (VERY IMPORTANT)
+	    if (request.getServletPath().equals("/")) {
+	        filterChain.doFilter(request, response);
+	        return;
+	    }
+
+		
 		 logger.info("validation of JWT token by OncePerRequestFilter"); 
 		 String token=request.getHeader("Authorization");
 		 logger.info( "JWT token :"+token );
@@ -58,7 +66,8 @@ public class JWTTokenFilter extends OncePerRequestFilter {
 				 	usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				 	SecurityContextHolder .getContext().setAuthentication(usernamePasswordAuthenticationToken);
 			 }else {
-				 System.out.println("token is invaild , please try with valid token ");
+				 //System.out.println("token is invaild , please try with valid token ");
+				 logger.info("token is invaild , please try with valid token");
 			 }
 			 
 		  }
